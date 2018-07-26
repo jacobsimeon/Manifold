@@ -9,30 +9,44 @@
 import Foundation
 
 public class Manifold {
+  static let lineEnding = "\r\n"
+
   private var parts: [Part] = []
   public var boundary: String?
+  private let input: InputStream
+  private let output: OutputStream
   
   public init() {
-    
+    var _input: InputStream?
+    var _output: OutputStream?
+    Stream.getBoundStreams(
+      withBufferSize: 4096,
+      inputStream: &_input,
+      outputStream: &_output
+    )
+
+    guard let input = _input, let output = _output else {
+      fatalError(
+        "Unable to bind input & output streams, that's practically impossible"
+      )
+    }
+
+    self.input = input
+    self.output = output
   }
   
   public func append(part: Part) {
     parts.append(part)
   }
-  
+
   public func getBodyStream() -> InputStream {
-    var _input: InputStream?
-    var _output: OutputStream?
-    Stream.getBoundStreams(withBufferSize: 4096, inputStream: &_input, outputStream: &_output)
-    
-    guard let input = _input, let output = _output else {
-      fatalError("Unable to bind input & output streams, that's practically impossible")
-    }
-    
-    let writer = StreamWriter(stream: output)
-    writeParts(with: writer, parts: parts)
-    
     return input
+  }
+
+  var writer: StreamWriter!
+  public func startWriting() {
+    writer = StreamWriter(stream: output)
+    writeParts(with: writer, parts: parts)
   }
   
   private func writeParts(with writer: StreamWriter, parts: [Part]) {
@@ -41,9 +55,9 @@ public class Manifold {
         writer.append("--\(boundary)")
       }
       
-      writer.append("\n")
+      writer.append(Manifold.lineEnding)
       part.write(with: writer) {
-        writer.append("\n")
+        writer.append(Manifold.lineEnding)
         self.writeParts(
           with: writer,
           parts: Array(parts[1..<parts.count])

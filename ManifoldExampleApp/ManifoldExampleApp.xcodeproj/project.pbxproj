@@ -7,21 +7,46 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		AE4A97CB2107A998000F4752 /* AssetDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE4A97CA2107A998000F4752 /* AssetDetailsViewController.swift */; };
+		AE4A97CC21095D00000F4752 /* Manifold.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AEB32CB8210537D300B4B347 /* Manifold.framework */; };
+		AE4A97CD21095D00000F4752 /* Manifold.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AEB32CB8210537D300B4B347 /* Manifold.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		AEB32CB4210448DA00B4B347 /* Asset.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB32CB3210448DA00B4B347 /* Asset.swift */; };
+		AEB32CB62104493E00B4B347 /* AssetCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB32CB52104493E00B4B347 /* AssetCollectionViewCell.swift */; };
+		AEB32CBB210540E600B4B347 /* UploadViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB32CBA210540E600B4B347 /* UploadViewController.swift */; };
+		AEB32CBD21056CB400B4B347 /* UTI.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEB32CBC21056CB400B4B347 /* UTI.swift */; };
 		AEF423C721044423006041E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF423C621044423006041E6 /* AppDelegate.swift */; };
-		AEF423C921044423006041E6 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF423C821044423006041E6 /* ViewController.swift */; };
-		AEF423CC21044423006041E6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AEF423CA21044423006041E6 /* Main.storyboard */; };
 		AEF423CE21044423006041E6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AEF423CD21044423006041E6 /* Assets.xcassets */; };
 		AEF423D121044423006041E6 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AEF423CF21044423006041E6 /* LaunchScreen.storyboard */; };
+		AEF423D92104458F006041E6 /* AssetsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEF423D82104458F006041E6 /* AssetsViewController.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		AE4A97CE21095D00000F4752 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				AE4A97CD21095D00000F4752 /* Manifold.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		AE4A97CA2107A998000F4752 /* AssetDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetDetailsViewController.swift; sourceTree = "<group>"; };
+		AEB32CB3210448DA00B4B347 /* Asset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Asset.swift; sourceTree = "<group>"; };
+		AEB32CB52104493E00B4B347 /* AssetCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetCollectionViewCell.swift; sourceTree = "<group>"; };
+		AEB32CB8210537D300B4B347 /* Manifold.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Manifold.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		AEB32CBA210540E600B4B347 /* UploadViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadViewController.swift; sourceTree = "<group>"; };
+		AEB32CBC21056CB400B4B347 /* UTI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTI.swift; sourceTree = "<group>"; };
 		AEF423C321044423006041E6 /* ManifoldExampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ManifoldExampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AEF423C621044423006041E6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		AEF423C821044423006041E6 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		AEF423CB21044423006041E6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		AEF423CD21044423006041E6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AEF423D021044423006041E6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		AEF423D221044423006041E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		AEF423D82104458F006041E6 /* AssetsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,17 +54,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE4A97CC21095D00000F4752 /* Manifold.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		AEB32CB7210537D300B4B347 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				AEB32CB8210537D300B4B347 /* Manifold.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		AEF423BA21044423006041E6 = {
 			isa = PBXGroup;
 			children = (
 				AEF423C521044423006041E6 /* ManifoldExampleApp */,
 				AEF423C421044423006041E6 /* Products */,
+				AEB32CB7210537D300B4B347 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -55,11 +90,15 @@
 			isa = PBXGroup;
 			children = (
 				AEF423C621044423006041E6 /* AppDelegate.swift */,
-				AEF423C821044423006041E6 /* ViewController.swift */,
-				AEF423CA21044423006041E6 /* Main.storyboard */,
 				AEF423CD21044423006041E6 /* Assets.xcassets */,
 				AEF423CF21044423006041E6 /* LaunchScreen.storyboard */,
 				AEF423D221044423006041E6 /* Info.plist */,
+				AEF423D82104458F006041E6 /* AssetsViewController.swift */,
+				AEB32CB3210448DA00B4B347 /* Asset.swift */,
+				AEB32CB52104493E00B4B347 /* AssetCollectionViewCell.swift */,
+				AEB32CBA210540E600B4B347 /* UploadViewController.swift */,
+				AEB32CBC21056CB400B4B347 /* UTI.swift */,
+				AE4A97CA2107A998000F4752 /* AssetDetailsViewController.swift */,
 			);
 			path = ManifoldExampleApp;
 			sourceTree = "<group>";
@@ -74,6 +113,7 @@
 				AEF423BF21044423006041E6 /* Sources */,
 				AEF423C021044423006041E6 /* Frameworks */,
 				AEF423C121044423006041E6 /* Resources */,
+				AE4A97CE21095D00000F4752 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -124,7 +164,6 @@
 			files = (
 				AEF423D121044423006041E6 /* LaunchScreen.storyboard in Resources */,
 				AEF423CE21044423006041E6 /* Assets.xcassets in Resources */,
-				AEF423CC21044423006041E6 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,22 +174,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				AEF423C921044423006041E6 /* ViewController.swift in Sources */,
+				AEB32CB4210448DA00B4B347 /* Asset.swift in Sources */,
+				AEB32CBB210540E600B4B347 /* UploadViewController.swift in Sources */,
+				AEB32CBD21056CB400B4B347 /* UTI.swift in Sources */,
 				AEF423C721044423006041E6 /* AppDelegate.swift in Sources */,
+				AEF423D92104458F006041E6 /* AssetsViewController.swift in Sources */,
+				AEB32CB62104493E00B4B347 /* AssetCollectionViewCell.swift in Sources */,
+				AE4A97CB2107A998000F4752 /* AssetDetailsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		AEF423CA21044423006041E6 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				AEF423CB21044423006041E6 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		AEF423CF21044423006041E6 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -281,7 +317,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3DX367L887;
+				DEVELOPMENT_TEAM = NKUVV732PX;
 				INFOPLIST_FILE = ManifoldExampleApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -299,7 +335,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 3DX367L887;
+				DEVELOPMENT_TEAM = NKUVV732PX;
 				INFOPLIST_FILE = ManifoldExampleApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

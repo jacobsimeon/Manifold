@@ -74,6 +74,16 @@ public class StreamWriter: NSObject, StreamDelegate {
     let numBytesWritten = data.withUnsafeBytes { bytes in
       self.stream.write(bytes, maxLength: data.count)
     }
+
+    if(numBytesWritten == -1) {
+      if let error = stream.streamError {
+        print(error)
+      }
+      else {
+        print("an error occurred while trying to write some data")
+      }
+      return
+    }
     
     if(numBytesWritten == data.count) {
       data = Data()

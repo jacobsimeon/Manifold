@@ -25,13 +25,13 @@ public class StreamReader: NSObject, StreamDelegate {
   public func read(
     onChunkRead: @escaping (UnsafeMutablePointer<UInt8>, Int) -> (),
     onComplete: @escaping () -> ()
-    ) {
+  ) {
     self.onChunkRead = onChunkRead
     self.onComplete = onComplete
-    
+
     self.stream.open()
   }
-  
+
   public func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
     switch(eventCode) {
     case Stream.Event.hasBytesAvailable:

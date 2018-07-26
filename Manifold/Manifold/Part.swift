@@ -26,10 +26,10 @@ public class Part {
   
   func write(with writer: StreamWriter, completion: @escaping () -> ()) {
     for (key, value) in headers {
-      writer.append("\(key): \(value)\n")
+      writer.append("\(key): \(value)\(Manifold.lineEnding)")
     }
     
-    writer.append("\n")
+    writer.append(Manifold.lineEnding)
     
     reader?.read(
       onChunkRead: { (bytes, count) in
