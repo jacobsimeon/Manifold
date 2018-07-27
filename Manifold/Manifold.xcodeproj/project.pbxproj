@@ -15,6 +15,9 @@
 		AE22BBA220E6BCE400BB5811 /* StreamWriter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE22BBA120E6BCE400BB5811 /* StreamWriter.swift */; };
 		AE22BBA320E6BD0700BB5811 /* StreamReader.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE22BB9B20E6BA6F00BB5811 /* StreamReader.swift */; };
 		AE22BBA520E6BD3100BB5811 /* readStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE22BBA420E6BD3100BB5811 /* readStream.swift */; };
+		AE4A97D0210A13AF000F4752 /* StreamReaderTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE4A97CF210A13AF000F4752 /* StreamReaderTestCase.swift */; };
+		AE4A97D2210A98DB000F4752 /* StreamWriterTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE4A97D1210A98DB000F4752 /* StreamWriterTestCase.swift */; };
+		AE4A97D4210AA654000F4752 /* StreamStitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE4A97D3210AA654000F4752 /* StreamStitcher.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,6 +42,9 @@
 		AE22BB9F20E6BC9100BB5811 /* Part.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Part.swift; sourceTree = "<group>"; };
 		AE22BBA120E6BCE400BB5811 /* StreamWriter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamWriter.swift; sourceTree = "<group>"; };
 		AE22BBA420E6BD3100BB5811 /* readStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = readStream.swift; sourceTree = "<group>"; };
+		AE4A97CF210A13AF000F4752 /* StreamReaderTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamReaderTestCase.swift; sourceTree = "<group>"; };
+		AE4A97D1210A98DB000F4752 /* StreamWriterTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamWriterTestCase.swift; sourceTree = "<group>"; };
+		AE4A97D3210AA654000F4752 /* StreamStitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamStitcher.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +93,7 @@
 				AE22BB9F20E6BC9100BB5811 /* Part.swift */,
 				AE22BBA120E6BCE400BB5811 /* StreamWriter.swift */,
 				AE22BB9B20E6BA6F00BB5811 /* StreamReader.swift */,
+				AE4A97D3210AA654000F4752 /* StreamStitcher.swift */,
 			);
 			path = Manifold;
 			sourceTree = "<group>";
@@ -95,8 +102,10 @@
 			isa = PBXGroup;
 			children = (
 				AE22BB9A20E6BA0C00BB5811 /* Support */,
-				AE22BB8E20E6B5DE00BB5811 /* ManifoldTests.swift */,
 				AE22BB9020E6B5DE00BB5811 /* Info.plist */,
+				AE22BB8E20E6B5DE00BB5811 /* ManifoldTests.swift */,
+				AE4A97CF210A13AF000F4752 /* StreamReaderTestCase.swift */,
+				AE4A97D1210A98DB000F4752 /* StreamWriterTestCase.swift */,
 			);
 			path = ManifoldTests;
 			sourceTree = "<group>";
@@ -219,6 +228,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AE22BBA320E6BD0700BB5811 /* StreamReader.swift in Sources */,
+				AE4A97D4210AA654000F4752 /* StreamStitcher.swift in Sources */,
 				AE22BBA020E6BC9100BB5811 /* Part.swift in Sources */,
 				AE22BBA220E6BCE400BB5811 /* StreamWriter.swift in Sources */,
 				AE22BB9E20E6BC7B00BB5811 /* Manifold.swift in Sources */,
@@ -231,6 +241,8 @@
 			files = (
 				AE22BB8F20E6B5DE00BB5811 /* ManifoldTests.swift in Sources */,
 				AE22BBA520E6BD3100BB5811 /* readStream.swift in Sources */,
+				AE4A97D2210A98DB000F4752 /* StreamWriterTestCase.swift in Sources */,
+				AE4A97D0210A13AF000F4752 /* StreamReaderTestCase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

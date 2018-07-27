@@ -149,7 +149,6 @@ class UploadViewController : UIViewController {
     }
   }
 
-  var streamReader: StreamReader?
   func uploadVideo() {
     imageManager.requestExportSession(
       forVideo: asset,
@@ -187,11 +186,13 @@ class UploadViewController : UIViewController {
       guard let data = data, let utiString = utiString else { return }
 
       let uti = UTI(string: utiString)
-      self?.uploadMedia(
-        InputStream(data: data),
-        mimeType: uti.mimeType,
-        fileExtension: uti.fileExtension
-      )
+      DispatchQueue.main.async {
+        self?.uploadMedia(
+          InputStream(data: data),
+          mimeType: uti.mimeType,
+          fileExtension: uti.fileExtension
+        )
+      }
     }
   }
 
@@ -224,9 +225,7 @@ class UploadViewController : UIViewController {
       forHTTPHeaderField: "Content-Type"
     )
     request.httpBodyStream = manifold?.getBodyStream()
-
-
-    URLSession.shared.dataTask(with: request) {
+    let task = URLSession.shared.dataTask(with: request) {
       [weak self]
       (data, response, error) in
 
@@ -245,8 +244,11 @@ class UploadViewController : UIViewController {
             .uploadViewControllerDelegateDidUploadSuccessfully(sself)
         }
       }
-    }.resume()
-    manifold?.startWriting()
+    }
 
+    task.resume()
+    manifold?.startWriting() {
+      print("done writing")
+    }
   }
 }

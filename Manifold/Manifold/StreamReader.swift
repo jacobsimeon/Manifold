@@ -8,44 +8,71 @@
 
 import Foundation
 
-public class StreamReader: NSObject, StreamDelegate {
-  private let stream: InputStream
-  private var onChunkRead: ((UnsafeMutablePointer<UInt8>, Int) -> ())?
-  private var onComplete: (() -> ())?
-  
-  public init(stream: InputStream) {
-    self.stream = stream
-    
-    super.init()
-    
-    self.stream.delegate = self
-    self.stream.schedule(in: .current, forMode: .defaultRunLoopMode)
-  }
-  
-  public func read(
-    onChunkRead: @escaping (UnsafeMutablePointer<UInt8>, Int) -> (),
-    onComplete: @escaping () -> ()
-  ) {
-    self.onChunkRead = onChunkRead
-    self.onComplete = onComplete
+public protocol StreamReaderDelegate : class {
+  func streamReader(_ streamReader: StreamReader, didReadChunk chunk: Data)
+  func streamReaderDidReachEndOfStream(_ streamReader: StreamReader)
+}
 
-    self.stream.open()
+public class StreamReader: NSObject, StreamDelegate {
+  weak public var delegate: StreamReaderDelegate?
+  private let input: InputStream
+  private var isReadyToRead = false
+  private var canReadImmediately = false
+
+  public init(input: InputStream) {
+    self.input = input
+
+    super.init()
+
+    input.delegate = self
+    input.schedule(in: .current, forMode: .commonModes)
+  }
+
+  func openStream() {
+    input.open()
+  }
+
+  func close() {
+    input.close()
+  }
+
+  public func read() {
+    isReadyToRead = true
+    if(canReadImmediately) {
+      doRead()
+      canReadImmediately = false
+    }
   }
 
   public func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
     switch(eventCode) {
+    case Stream.Event.openCompleted:
+      break
     case Stream.Event.hasBytesAvailable:
-      let bufferSize = 4096
-      let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
-      let numBytesRead = stream.read(buffer, maxLength: bufferSize)
-      
-      if(numBytesRead > 0) {
-        self.onChunkRead?(buffer, numBytesRead)
+      print("bytes available")
+      if(isReadyToRead) {
+        doRead()
+        isReadyToRead = false
+      } else {
+        canReadImmediately = true
       }
+    case Stream.Event.hasSpaceAvailable:
+      break
+    case Stream.Event.errorOccurred:
+      break
     case Stream.Event.endEncountered:
-      onComplete?()
+      delegate?.streamReaderDidReachEndOfStream(self)
     default:
       break
     }
+  }
+
+  private func doRead() {
+    let maxLength = 4096
+    let bytes = UnsafeMutablePointer<UInt8>.allocate(capacity: maxLength)
+    let bytesRead = input.read(bytes, maxLength: maxLength)
+
+    let dataRead = Data(bytes: bytes, count: bytesRead)
+    delegate?.streamReader(self, didReadChunk: dataRead)
   }
 }

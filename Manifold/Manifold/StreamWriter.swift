@@ -8,97 +8,56 @@
 
 import Foundation
 
+public protocol StreamWriterDelegate: class {
+  func streamWriterHasSpaceAvailable(_: StreamWriter)
+}
+
 public class StreamWriter: NSObject, StreamDelegate {
-  private let stream: OutputStream
-  private var data: Data
-  private var canWriteImmediately: Bool = false
-  private var isDone: Bool = false
-  
-  public init(stream: OutputStream) {
-    self.stream = stream
-    
-    self.data = Data()
-    
+  private let output: OutputStream
+  public weak var delegate: StreamWriterDelegate?
+
+  public init(output: OutputStream) {
+    self.output = output
+
     super.init()
-    
-    self.stream.delegate = self
-    self.stream.schedule(in: .current, forMode: .defaultRunLoopMode)
-    self.stream.open()
+
+    self.output.delegate = self
   }
-  
-  public func append(_ string: String) {
-    guard let data = string.data(using: .utf8) else { return }
-    
-    append(data)
+
+  func done() {
+    output.close()
   }
-  
-  public func append(bytes: UnsafeRawPointer, count: Int) {
-    append(Data(bytes: bytes, count: count))
-  }
-  
-  public func append(_ data: Data) {
-    self.data.append(data)
-    
-    if(canWriteImmediately) {
-      canWriteImmediately = false
-      writeNextChunk()
+
+  public func write(_ data: Data) {
+    let bytesWritten = data.withUnsafeBytes { bytes in
+      output.write(bytes, maxLength: data.count)
+    }
+    if let string = String(data: data, encoding: .utf8) {
+      print(string)
+    }
+    else {
+      print("wrote \(bytesWritten) bytes")
     }
   }
-  
-  public func done() {
-    isDone = true
-    
-    if data.isEmpty {
-      finish()
-    }
-  }
-  
+
   public func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
     switch(eventCode) {
+    case Stream.Event.openCompleted:
+      break
+    case Stream.Event.hasBytesAvailable:
+      break
     case Stream.Event.hasSpaceAvailable:
-      if(data.isEmpty && isDone) {
-        finish()
-      }
-      else if data.isEmpty {
-        canWriteImmediately = true
-      }
-      else {
-        writeNextChunk()
-      }
+      print("Space available")
+      delegate?.streamWriterHasSpaceAvailable(self)
+      break
+    case Stream.Event.errorOccurred:
+      print("error occurred")
+      break
+    case Stream.Event.endEncountered:
+      break
     default:
       break
     }
-  }
-  
-  private func writeNextChunk() {
-    let numBytesWritten = data.withUnsafeBytes { bytes in
-      self.stream.write(bytes, maxLength: data.count)
-    }
-
-    if(numBytesWritten == -1) {
-      if let error = stream.streamError {
-        print(error)
-      }
-      else {
-        print("an error occurred while trying to write some data")
-      }
-      return
-    }
-    
-    if(numBytesWritten == data.count) {
-      data = Data()
-    }
-    else {
-      data = data.advanced(by: numBytesWritten)
-    }
-    
-    if(data.isEmpty && isDone) {
-      finish()
-    }
-  }
-  
-  private func finish() {
-    stream.close()
   }
 }
 

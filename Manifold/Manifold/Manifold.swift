@@ -14,8 +14,8 @@ public class Manifold {
   private var parts: [Part] = []
   public var boundary: String?
   private let input: InputStream
-  private let output: OutputStream
-  
+  private let stitcher: StreamStitcher
+
   public init() {
     var _input: InputStream?
     var _output: OutputStream?
@@ -32,7 +32,13 @@ public class Manifold {
     }
 
     self.input = input
-    self.output = output
+    self.stitcher = StreamStitcher(writer: StreamWriter(output: output))
+
+    output.schedule(in: .current, forMode: .defaultRunLoopMode)
+    input.schedule(in: .current, forMode: .defaultRunLoopMode)
+
+    input.open()
+    output.open()
   }
   
   public func append(part: Part) {
@@ -43,33 +49,33 @@ public class Manifold {
     return input
   }
 
-  var writer: StreamWriter!
-  public func startWriting() {
-    writer = StreamWriter(stream: output)
-    writeParts(with: writer, parts: parts)
+  public func startWriting(completion: (() -> ())? = nil) {
+    writeParts(with: stitcher, parts: parts, completion: completion)
   }
   
-  private func writeParts(with writer: StreamWriter, parts: [Part]) {
-    if let part = parts.first {
-      if let boundary = boundary {
-        writer.append("--\(boundary)")
+  private func writeParts(
+    with stitcher: StreamStitcher,
+    parts: [Part],
+    completion: (() -> ())? = nil
+  ) {
+    guard let part = parts.first else {
+      stitcher.stitch(string: "--\(boundary ?? "")--") {
+        stitcher.done()
+        completion?()
       }
-      
-      writer.append(Manifold.lineEnding)
-      part.write(with: writer) {
-        writer.append(Manifold.lineEnding)
-        self.writeParts(
-          with: writer,
-          parts: Array(parts[1..<parts.count])
-        )
-      }
+      return
     }
-    else {
-      if let boundary = boundary {
-        writer.append("--\(boundary)--")
+
+    stitcher.stitch(string: "--\(boundary ?? "")\(Manifold.lineEnding)") {
+      part.write(with: stitcher) {
+        stitcher.stitch(string: Manifold.lineEnding) {
+          self.writeParts(
+            with: stitcher,
+            parts: Array(parts[1..<parts.count]),
+            completion: completion
+          )
+        }
       }
-      
-      writer.done()
     }
   }
 }

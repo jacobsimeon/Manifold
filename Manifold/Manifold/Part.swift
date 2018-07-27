@@ -9,9 +9,9 @@
 import Foundation
 
 public class Part {
-  private var reader: StreamReader?
+  private var body: InputStream?
   private var headers: [String: String]
-  
+
   public init() {
     headers = [:]
   }
@@ -21,24 +21,18 @@ public class Part {
   }
   
   public func body(_ body: InputStream) {
-    reader = StreamReader(stream: body)
+    self.body = body
   }
-  
-  func write(with writer: StreamWriter, completion: @escaping () -> ()) {
-    for (key, value) in headers {
-      writer.append("\(key): \(value)\(Manifold.lineEnding)")
+
+  func write(with stitcher: StreamStitcher, completion: @escaping () -> ()) {
+    var headersString = headers.map({ (key, value) -> String in
+      "\(key): \(value)"
+    }).joined(separator: Manifold.lineEnding)
+    headersString += Manifold.lineEnding
+    headersString += Manifold.lineEnding
+
+    stitcher.stitch(string: headersString) {
+      stitcher.stitch(input: self.body!, completion: completion)
     }
-    
-    writer.append(Manifold.lineEnding)
-    
-    reader?.read(
-      onChunkRead: { (bytes, count) in
-        writer.append(bytes: bytes, count: count)
-      },
-      onComplete: {
-        completion()
-      }
-    )
   }
-  
 }
