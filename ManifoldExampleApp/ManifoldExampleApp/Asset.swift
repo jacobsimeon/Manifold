@@ -8,8 +8,8 @@
 
 import Foundation
 
-let baseURLString = "http://0.0.0.0:8080" as NSString
-// let baseURLString = "http://10.0.1.19:8080" as NSString
+// let baseURLString = "http://0.0.0.0:8080" as NSString
+let baseURLString = "http://10.0.1.19:8080" as NSString
 
 struct Asset : Codable {
   let uri: String

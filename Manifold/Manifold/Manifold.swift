@@ -8,74 +8,100 @@
 
 import Foundation
 
+public protocol ManifoldDelegate : class {
+  func manifold(_ manifold: Manifold, didFinishEncoding stream: InputStream)
+}
+
 public class Manifold {
   static let lineEnding = "\r\n"
 
-  private var parts: [Part] = []
+  public weak var delegate: ManifoldDelegate?
   public var boundary: String?
-  private let input: InputStream
+
+  private var segments: [InputStream] = []
+  private var parts: [Part] = []
+
+  public let fileURL: URL
+  private let output: OutputStream
   private let stitcher: StreamStitcher
 
+  private var isOutputStreamOpen = false
+  private var shouldBeginEncodingOnStreamOpen = false
+
   public init() {
-    var _input: InputStream?
-    var _output: OutputStream?
-    Stream.getBoundStreams(
-      withBufferSize: 4096,
-      inputStream: &_input,
-      outputStream: &_output
-    )
-
-    guard let input = _input, let output = _output else {
-      fatalError(
-        "Unable to bind input & output streams, that's practically impossible"
-      )
-    }
-
-    self.input = input
+    self.fileURL = Manifold.getTempFile()
+    self.output = OutputStream(url: fileURL, append: true)!
     self.stitcher = StreamStitcher(writer: StreamWriter(output: output))
+    self.stitcher.delegate = self
 
-    output.schedule(in: .current, forMode: .defaultRunLoopMode)
-    input.schedule(in: .current, forMode: .defaultRunLoopMode)
-
-    input.open()
-    output.open()
+    self.output.schedule(in: .current, forMode: .defaultRunLoopMode)
+    self.output.open()
   }
   
   public func append(part: Part) {
     parts.append(part)
   }
 
-  public func getBodyStream() -> InputStream {
-    return input
+  private func i(_ string: String) -> InputStream {
+    guard let data = string.data(using: .utf8) else {
+      fatalError("Unable to encode \(string) as UTF8")
+    }
+
+    return InputStream(data: data)
   }
 
-  public func startWriting(completion: (() -> ())? = nil) {
-    writeParts(with: stitcher, parts: parts, completion: completion)
-  }
-  
-  private func writeParts(
-    with stitcher: StreamStitcher,
-    parts: [Part],
-    completion: (() -> ())? = nil
-  ) {
-    guard let part = parts.first else {
-      stitcher.stitch(string: "--\(boundary ?? "")--") {
-        stitcher.done()
-        completion?()
+  public func encode() {
+    guard let boundary = boundary else {
+      fatalError("Set boundary first")
+    }
+
+    parts.forEach { part in
+      segments.append(i("--\(boundary)\(Manifold.lineEnding)"))
+      part.headers.forEach { (key, value) in
+        segments.append(i("\(key): \(value)\(Manifold.lineEnding)"))
       }
+      segments.append(i(Manifold.lineEnding))
+      segments.append(part.body!)
+      segments.append(i(Manifold.lineEnding))
+    }
+
+    segments.append(i("--\(boundary)--"))
+
+    writeNextSegment()
+  }
+
+  private func writeNextSegment() {
+    guard !segments.isEmpty else {
+      stitcher.done()
       return
     }
 
-    stitcher.stitch(string: "--\(boundary ?? "")\(Manifold.lineEnding)") {
-      part.write(with: stitcher) {
-        stitcher.stitch(string: Manifold.lineEnding) {
-          self.writeParts(
-            with: stitcher,
-            parts: Array(parts[1..<parts.count]),
-            completion: completion
-          )
-        }
-      }
-    }
+    let segment = self.segments.removeFirst()
+    self.stitcher.stitch(input: segment)
+  }
+
+  static func getTempFile() -> URL {
+    let tempDirURL = URL(fileURLWithPath: NSTemporaryDirectory())
+    let tempFileURL = tempDirURL.appendingPathComponent(UUID().uuidString)
+
+    FileManager.default.createFile(
+      atPath: tempFileURL.path,
+      contents: nil,
+      attributes: nil
+    )
+
+    print(tempFileURL)
+    return tempFileURL
+  }
+
+}
+
+extension Manifold : StreamStitcherDelegate {
+  func streamStitcherDidFinishStitchingStream(_ stitcher: StreamStitcher) {
+    self.writeNextSegment()
+  }
+
+  func streamStitcherDidCloseStream(_ stitcher: StreamStitcher) {
+    delegate?.manifold(self, didFinishEncoding: InputStream(url: self.fileURL)!)
   }
 }

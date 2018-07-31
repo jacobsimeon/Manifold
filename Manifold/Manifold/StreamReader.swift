@@ -9,15 +9,13 @@
 import Foundation
 
 public protocol StreamReaderDelegate : class {
-  func streamReader(_ streamReader: StreamReader, didReadChunk chunk: Data)
-  func streamReaderDidReachEndOfStream(_ streamReader: StreamReader)
+  func streamReaderDidReadChunk(_ chunk: Data)
+  func streamReaderDidReachEndOfStream()
 }
 
 public class StreamReader: NSObject, StreamDelegate {
   weak public var delegate: StreamReaderDelegate?
   private let input: InputStream
-  private var isReadyToRead = false
-  private var canReadImmediately = false
 
   public init(input: InputStream) {
     self.input = input
@@ -28,20 +26,12 @@ public class StreamReader: NSObject, StreamDelegate {
     input.schedule(in: .current, forMode: .commonModes)
   }
 
-  func openStream() {
+  public func open() {
     input.open()
   }
 
-  func close() {
+  public func close() {
     input.close()
-  }
-
-  public func read() {
-    isReadyToRead = true
-    if(canReadImmediately) {
-      doRead()
-      canReadImmediately = false
-    }
   }
 
   public func stream(_ aStream: Stream, handle eventCode: Stream.Event) {
@@ -49,19 +39,14 @@ public class StreamReader: NSObject, StreamDelegate {
     case Stream.Event.openCompleted:
       break
     case Stream.Event.hasBytesAvailable:
-      print("bytes available")
-      if(isReadyToRead) {
-        doRead()
-        isReadyToRead = false
-      } else {
-        canReadImmediately = true
-      }
+      doRead()
     case Stream.Event.hasSpaceAvailable:
       break
     case Stream.Event.errorOccurred:
       break
     case Stream.Event.endEncountered:
-      delegate?.streamReaderDidReachEndOfStream(self)
+      delegate?.streamReaderDidReachEndOfStream()
+      close()
     default:
       break
     }
@@ -73,6 +58,7 @@ public class StreamReader: NSObject, StreamDelegate {
     let bytesRead = input.read(bytes, maxLength: maxLength)
 
     let dataRead = Data(bytes: bytes, count: bytesRead)
-    delegate?.streamReader(self, didReadChunk: dataRead)
+    delegate?.streamReaderDidReadChunk(dataRead)
+    bytes.deallocate()
   }
 }

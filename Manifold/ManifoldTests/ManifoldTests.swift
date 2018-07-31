@@ -9,10 +9,19 @@
 import XCTest
 import Manifold
 
+class TestManifoldDelegate : ManifoldDelegate {
+  var onFinish: ((InputStream) -> ())?
+
+  func manifold(_ manifold: Manifold, didFinishEncoding stream: InputStream) {
+    onFinish?(stream)
+  }
+}
+
 class ManifoldTests: XCTestCase {
-  let manifold = Manifold()
+  var manifold: Manifold!
 
   func test_manifold_canWriteAMultipartRequest() {
+    manifold = Manifold()
     manifold.boundary = "1234567890"
 
     let greetingPart = Part()
@@ -27,11 +36,23 @@ class ManifoldTests: XCTestCase {
     manifold.append(part: greetingPart)
     manifold.append(part: salutationPart)
 
-    let bodyStream = manifold.getBodyStream()
-    manifold.startWriting()
-    RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+    var fullBody: String?
+    let finishedWriting = expectation(description: "Finished writing")
+    let delegate = TestManifoldDelegate()
+    delegate.onFinish = { stream in
+      let bodyData = try! Data(contentsOf: self.manifold.fileURL)
+      let body = String(data: bodyData, encoding: .utf8)
+      fullBody = body
+      finishedWriting.fulfill()
+    }
 
-    let fullBody = String(data: quickRead(input: bodyStream), encoding: .utf8)
+    manifold.delegate = delegate
+    manifold.encode()
+
+    waitForExpectations(timeout: 1.0)
+
+    manifold = nil
+
     let expectedBody = """
     --1234567890\r
     Content-Type: text/plain\r

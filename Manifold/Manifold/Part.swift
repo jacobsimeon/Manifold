@@ -9,8 +9,8 @@
 import Foundation
 
 public class Part {
-  private var body: InputStream?
-  private var headers: [String: String]
+  var body: InputStream?
+  var headers: [String: String]
 
   public init() {
     headers = [:]
@@ -22,17 +22,5 @@ public class Part {
   
   public func body(_ body: InputStream) {
     self.body = body
-  }
-
-  func write(with stitcher: StreamStitcher, completion: @escaping () -> ()) {
-    var headersString = headers.map({ (key, value) -> String in
-      "\(key): \(value)"
-    }).joined(separator: Manifold.lineEnding)
-    headersString += Manifold.lineEnding
-    headersString += Manifold.lineEnding
-
-    stitcher.stitch(string: headersString) {
-      stitcher.stitch(input: self.body!, completion: completion)
-    }
   }
 }

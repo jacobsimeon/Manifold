@@ -16,7 +16,7 @@ protocol UploadViewControllerDelegate: class {
   )
 }
 
-class UploadViewController : UIViewController {
+class UploadViewController : UIViewController, ManifoldDelegate {
   let asset: PHAsset
   let imageManager: PHImageManager
   weak var delegate: UploadViewControllerDelegate?
@@ -197,13 +197,15 @@ class UploadViewController : UIViewController {
   }
 
   private var manifold: Manifold?
+  let boundary = UUID().uuidString.replacingOccurrences(of: "-", with: "")
+
   func uploadMedia(
     _ inputStream: InputStream,
     mimeType: String,
     fileExtension: String
   ) {
     manifold = Manifold()
-    let boundary = UUID().uuidString.replacingOccurrences(of: "-", with: "")
+    manifold?.delegate = self
     manifold?.boundary = boundary
 
     let part = Part()
@@ -216,7 +218,10 @@ class UploadViewController : UIViewController {
     part.body(inputStream)
 
     manifold?.append(part: part)
+    manifold?.encode()
+  }
 
+  func manifold(_ manifold: Manifold, didFinishEncoding stream: InputStream) {
     let urlString = baseURLString.appendingPathComponent("/files")
     var request = URLRequest(url: URL(string: urlString)!)
     request.httpMethod = "POST"
@@ -224,7 +229,8 @@ class UploadViewController : UIViewController {
       "multipart/form-data; boundary=\(boundary)",
       forHTTPHeaderField: "Content-Type"
     )
-    request.httpBodyStream = manifold?.getBodyStream()
+    request.httpBodyStream = stream
+
     let task = URLSession.shared.dataTask(with: request) {
       [weak self]
       (data, response, error) in
@@ -247,8 +253,5 @@ class UploadViewController : UIViewController {
     }
 
     task.resume()
-    manifold?.startWriting() {
-      print("done writing")
-    }
   }
 }
